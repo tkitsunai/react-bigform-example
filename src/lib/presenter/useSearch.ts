@@ -1,5 +1,5 @@
 import { searchCompany } from "@/usecase/searchCompany";
-import { useState } from "react";
+import { ChangeEvent, MouseEventHandler, useCallback, useState } from "react";
 
 export type CompanyId = string;
 
@@ -15,13 +15,13 @@ export const useSearch = () => {
   const [companyId, setCompanyId] = useState("");
   const [error, setError] = useState("");
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     setCompanyId(e.target.value);
-  };
+  }, []);
 
-  const onSearchHandler = (_: React.MouseEvent<HTMLButtonElement>) => {
+  const onSearchHandler = (e: MouseEventHandler<HTMLButtonElement>) => {
     // 必要ならここにボタンがクリックされた時の処理を書く
-    console.log("on search handler");
+    console.log("on search handler", e);
   };
 
   const formSubmitHandler = async (

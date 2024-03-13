@@ -75,14 +75,14 @@ export function BigFormContainer() {
         <SearchForm.Button onClickHandler={onSearchHandler} />
       </SearchForm>
       <RegistrationForm formSubmitHandler={registrationSubmitHandler}>
-        {items.inputs.map((input: InputItemProps, key: number) => {
+        {items.inputs.map((item: InputItemProps, key: number) => {
           return (
             <RegistrationForm.Item
               key={key}
-              fieldName={input.fieldName}
-              label={input.label}
-              type={input.type}
-              value={registrationFormData[input.fieldName]}
+              fieldName={item.fieldName}
+              label={item.label}
+              type={item.type}
+              value={registrationFormData[item.fieldName]}
               onChangeHandler={registrationChangeHandler}
             />
           );

@@ -1,4 +1,5 @@
 import { RegisterFormItems } from "@/presenter/useRegistration";
+import React from "react";
 import { FC, FormEvent } from "react";
 
 export type InputType = "text" | "number" | "email" | "tel" | "password";
@@ -39,6 +40,7 @@ export function FormItem({
   value,
   onChangeHandler,
 }: InputItemProps & InputItemExtendsProps) {
+  console.log("form item: ", label);
   return (
     <div>
       <label>{label}</label>
@@ -58,5 +60,5 @@ export function RegistrationForm({
 }: RegistrationFormProps & RegistrationFormChildProps) {
   return <form onSubmit={formSubmitHandler}>{children}</form>;
 }
-RegistrationForm.Button = RegistrationButton;
-RegistrationForm.Item = FormItem;
+RegistrationForm.Button = React.memo(RegistrationButton);
+RegistrationForm.Item = React.memo(FormItem);

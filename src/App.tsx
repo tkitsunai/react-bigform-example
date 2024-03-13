@@ -14,8 +14,14 @@ function App() {
       <ul style={listStyle}>
         <li>Non Reducer</li>
         <li>Non Context</li>
-        <li>Lift Up Pattern</li>
-        <li>Separate Component</li>
+        <li>State Lift-Up</li>
+        <li>State Lift-Down</li>
+        <li>Component Patterns</li>
+        <ul>
+          <li>Container & Presentational</li>
+          <li>Render Props</li>
+          <li>Custom Hooks</li>
+        </ul>
       </ul>
       <BigFormContainer />
     </>

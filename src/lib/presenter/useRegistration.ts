@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { FormEvent, useCallback, useState } from "react";
 
 export type RegisterFormItems = {
   name: string;
@@ -13,23 +13,29 @@ export const useRegistration = (
   const [formData, setFormData] = useState<RegisterFormItems>(initialFormData);
 
   // 個別フィールドの更新
-  const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [name]: value,
-    }));
-  };
+  const onChangeHandler = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = e.target;
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [name]: value,
+      }));
+    },
+    []
+  );
 
   // 検索結果による更新
-  const updateFormData = (newFormData: Partial<RegisterFormItems>) => {
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      ...newFormData,
-    }));
-  };
+  const updateFormData = useCallback(
+    (newFormData: Partial<RegisterFormItems>) => {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        ...newFormData,
+      }));
+    },
+    []
+  );
 
-  const formSubmitHandler = (e: React.FormEvent) => {
+  const formSubmitHandler = (e: FormEvent) => {
     e.preventDefault();
     console.log(formData);
     alert("submited");
