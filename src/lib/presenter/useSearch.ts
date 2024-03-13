@@ -1,5 +1,5 @@
 import { searchCompany } from "@/usecase/searchCompany";
-import { ChangeEvent, MouseEventHandler, useCallback, useState } from "react";
+import { ChangeEvent, MouseEvent, useCallback, useState } from "react";
 
 export type CompanyId = string;
 
@@ -19,7 +19,7 @@ export const useSearch = () => {
     setCompanyId(e.target.value);
   }, []);
 
-  const onSearchHandler = (e: MouseEventHandler<HTMLButtonElement>) => {
+  const onSearchHandler = (e: MouseEvent<HTMLButtonElement>) => {
     // 必要ならここにボタンがクリックされた時の処理を書く
     console.log("on search handler", e);
   };
