@@ -10,6 +10,7 @@ export type SearchResult = {
   url: string;
 };
 
+// custom hook for search
 export const useSearch = () => {
   const [companyId, setCompanyId] = useState("");
   const [error, setError] = useState("");
@@ -18,7 +19,12 @@ export const useSearch = () => {
     setCompanyId(e.target.value);
   };
 
-  const handleSearch = async (
+  const onSearchHandler = (_: React.MouseEvent<HTMLButtonElement>) => {
+    // 必要ならここにボタンがクリックされた時の処理を書く
+    console.log("on search handler");
+  };
+
+  const formSubmitHandler = async (
     companyId: CompanyId,
     callback: (result: SearchResult) => void
   ) => {
@@ -37,5 +43,12 @@ export const useSearch = () => {
     }
   };
 
-  return { companyId, setCompanyId, handleChange, handleSearch, error };
+  return {
+    companyId,
+    setCompanyId,
+    handleChange,
+    formSubmitHandler,
+    onSearchHandler,
+    error,
+  };
 };

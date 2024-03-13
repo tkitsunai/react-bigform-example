@@ -6,13 +6,14 @@ export type RegisterFormItems = {
   url: string;
 };
 
+// custom hook for registration
 export const useRegistration = (
   initialFormData: Required<RegisterFormItems>
 ) => {
   const [formData, setFormData] = useState<RegisterFormItems>(initialFormData);
 
   // 個別フィールドの更新
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevFormData) => ({
       ...prevFormData,
@@ -28,7 +29,7 @@ export const useRegistration = (
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const formSubmitHandler = (e: React.FormEvent) => {
     e.preventDefault();
     console.log(formData);
     alert("submited");
@@ -37,7 +38,7 @@ export const useRegistration = (
   return {
     formData,
     updateFormData,
-    handleSubmit,
-    handleChange,
+    formSubmitHandler,
+    onChangeHandler,
   };
 };
