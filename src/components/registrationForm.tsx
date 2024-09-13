@@ -1,21 +1,26 @@
-import { RegisterFormItems } from "@/presenter/useRegistration";
-import React from "react";
+import { RegisterFormItemKeys } from "@lib/presenter/useRegistration";
+import React, {
+  DetailedHTMLProps,
+  HTMLInputTypeAttribute,
+  InputHTMLAttributes,
+} from "react";
 import { FC, FormEvent } from "react";
 
-export type InputType = "text" | "number" | "email" | "tel" | "password";
-export type RegisterFormItemKey = keyof RegisterFormItems;
-
 export type InputItemProps = {
-  fieldName: RegisterFormItemKey;
+  fieldName: RegisterFormItemKeys;
   label: string;
-  type: InputType;
+  type: HTMLInputTypeAttribute;
+  error?: string;
 };
 
 interface RegistrationFormProps {
   formSubmitHandler: (event: FormEvent<HTMLFormElement>) => void;
 }
 
-type RegistrationButtonProps = { label: string };
+type RegistrationButtonProps = {
+  label: string;
+};
+
 const RegistrationButton: FC<RegistrationButtonProps> = ({ label }) => {
   return <button type="submit">{label}</button>;
 };
@@ -28,28 +33,26 @@ interface RegistrationFormChildProps {
   children: RegistrationFormChild | RegistrationFormChild[];
 }
 
-interface InputItemExtendsProps {
-  value: string;
-  onChangeHandler: (event: React.ChangeEvent<HTMLInputElement>) => void;
-}
-
 export function FormItem({
   fieldName,
   label,
   type,
   value,
-  onChangeHandler,
-}: InputItemProps & InputItemExtendsProps) {
-  console.log("form item: ", label);
+  onChange,
+  error,
+}: InputItemProps &
+  DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>) {
   return (
     <div>
-      <label>{label}</label>
+      <label htmlFor={fieldName}>{label}</label>
       <input
         type={type}
+        id={fieldName}
         name={fieldName}
         value={value}
-        onChange={onChangeHandler}
+        onChange={onChange}
       />
+      {error && <p style={{ color: "red" }}>{error}</p>}
     </div>
   );
 }
@@ -62,3 +65,4 @@ export function RegistrationForm({
 }
 RegistrationForm.Button = React.memo(RegistrationButton);
 RegistrationForm.Item = React.memo(FormItem);
+export const MemoRegistrationForm = React.memo(RegistrationForm);

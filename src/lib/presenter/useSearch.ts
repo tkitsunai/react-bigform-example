@@ -1,4 +1,4 @@
-import { searchCompany } from "@/usecase/searchCompany";
+import { searchCompany } from "@lib/usecase/searchCompany";
 import { ChangeEvent, MouseEvent, useCallback, useState } from "react";
 
 export type CompanyId = string;
@@ -8,12 +8,14 @@ export type SearchResult = {
   name: string;
   address: string;
   url: string;
+  telephone: string;
+  email: string;
 };
 
 // custom hook for search
 export const useSearch = () => {
-  const [companyId, setCompanyId] = useState("");
-  const [error, setError] = useState("");
+  const [companyId, setCompanyId] = useState<string>("");
+  const [error, setError] = useState<string>("");
 
   const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     setCompanyId(e.target.value);

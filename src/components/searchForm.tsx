@@ -1,3 +1,4 @@
+import React from "react";
 import { FC, MouseEventHandler } from "react";
 
 interface ButtonProps {
@@ -36,4 +37,5 @@ export function SearchForm({
     </form>
   );
 }
-SearchForm.Button = SearchButton;
+SearchForm.Button = React.memo(SearchButton);
+export const MemoSearchForm = React.memo(SearchForm);

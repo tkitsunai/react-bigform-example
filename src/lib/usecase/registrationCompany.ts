@@ -1,31 +1,10 @@
-import { SearchResult } from "@/presenter/useSearch";
+import { RegisterCompany } from "@lib/domain/register";
+import { RegisterPort } from "@lib/port/registerPort";
 
-export type RegistrationCompanyOption = {
-  companyId: string;
-};
-
-type Result<T> =
-  | {
-      data: T;
-      error: null;
-    }
-  | {
-      data: null;
-      error: Error;
-    };
-
-export async function registrationCompany({
-  companyId,
-}: RegistrationCompanyOption): Promise<Result<SearchResult>> {
-  console.log("company id:", companyId);
-  // ここでAPI呼び出し, 以降のレイヤーは省略
+export function RegisterUsecase(port: RegisterPort) {
   return {
-    data: {
-      id: companyId,
-      name: "株式会社テスト",
-      address: "東京都新宿区",
-      url: "https://example.com",
+    registrationCompany: async (company: RegisterCompany): Promise<void> => {
+      return port.registrationCompany(company);
     },
-    error: null,
   };
 }

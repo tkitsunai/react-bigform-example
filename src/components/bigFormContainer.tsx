@@ -1,48 +1,31 @@
 import {
+  FinanceInfo,
+  RegisterFormItemKeys,
   RegisterFormItems,
   useRegistration,
-} from "@/presenter/useRegistration";
-import { SearchResult, useSearch } from "@/presenter/useSearch";
+} from "@lib/presenter/useRegistration";
+import { SearchResult, useSearch } from "@lib/presenter/useSearch";
+import { MemoSearchForm, SearchForm } from "@components/searchForm";
+import { overviewItems } from "@components/constants/overviewItems";
 import {
-  InputItemProps,
+  MemoRegistrationForm,
   RegistrationForm,
-} from "src/components/registrationForm";
-import { SearchForm } from "src/components/searchForm";
-
-const items: { inputs: InputItemProps[] } = {
-  inputs: [
-    {
-      fieldName: "name",
-      label: "企業名",
-      type: "text",
-    },
-    {
-      fieldName: "address",
-      label: "住所",
-      type: "text",
-    },
-    {
-      fieldName: "url",
-      label: "企業URL",
-      type: "text",
-    },
-  ],
-};
+} from "@components/registrationForm";
+import { RegisterGateway } from "@lib/gateway/registerGateway";
+import { RegisterUsecase } from "@lib/usecase/registrationCompany";
+import { API } from "@lib/driver/api";
+import { FormEvent } from "react";
+import { financeItems } from "@components/constants/financeItems";
 
 // Container Components
 export function BigFormContainer() {
-  const initialFormData: RegisterFormItems = {
-    name: "",
-    address: "",
-    url: "",
-  };
-
-  const {
-    formData: registrationFormData,
-    onChangeHandler: registrationChangeHandler,
+  const [
+    formData,
+    onChangeItemHandler,
     updateFormData,
-    formSubmitHandler: registrationSubmitHandler,
-  } = useRegistration(initialFormData);
+    registerOnSubmit,
+    errors,
+  ] = useRegistration();
 
   const {
     companyId,
@@ -52,20 +35,41 @@ export function BigFormContainer() {
     onSearchHandler,
   } = useSearch();
 
-  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const searchOnSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     searchSubmitHandler(companyId, (result: SearchResult) => {
       updateFormData({
-        name: result.name,
-        address: result.address,
-        url: result.url,
+        overview: {
+          name: result.name,
+          address: result.address,
+          url: result.url,
+          telephone: result.telephone,
+          email: result.email,
+        },
       });
     });
   };
 
+  const registerOnSubmitHandler = (e: FormEvent) => {
+    registerOnSubmit(e);
+    RegisterUsecase(RegisterGateway(API)).registrationCompany({
+      companyId: companyId,
+      overview: formData.overview,
+    });
+  };
+
+  function getNestedFormData(
+    formData: any,
+    fieldNamePath: RegisterFormItemKeys
+  ) {
+    return fieldNamePath
+      .split(".")
+      .reduce((acc, part) => acc && acc[part], formData);
+  }
+
   return (
-    <div>
-      <SearchForm handleFormSubmit={handleFormSubmit} error={searchError}>
+    <>
+      <MemoSearchForm handleFormSubmit={searchOnSubmit} error={searchError}>
         <input
           name="companyId"
           type="text"
@@ -73,22 +77,70 @@ export function BigFormContainer() {
           onChange={handleSearchChange}
         />
         <SearchForm.Button onClickHandler={onSearchHandler} />
-      </SearchForm>
-      <RegistrationForm formSubmitHandler={registrationSubmitHandler}>
-        {items.inputs.map((item: InputItemProps, key: number) => {
-          return (
-            <RegistrationForm.Item
-              key={key}
-              fieldName={item.fieldName}
-              label={item.label}
-              type={item.type}
-              value={registrationFormData[item.fieldName]}
-              onChangeHandler={registrationChangeHandler}
-            />
-          );
-        })}
+      </MemoSearchForm>
+      <MemoRegistrationForm formSubmitHandler={registerOnSubmitHandler}>
+        {OverviewForm(formData, onChangeItemHandler, errors, getNestedFormData)}
+        {FinanceForm(formData, onChangeItemHandler, errors, getNestedFormData)}
         <RegistrationForm.Button label="登録" />
-      </RegistrationForm>
-    </div>
+      </MemoRegistrationForm>
+    </>
   );
 }
+
+const OverviewForm = (
+  formData: RegisterFormItems,
+  onChangeItemHandler: (fieldName: RegisterFormItemKeys) => any,
+  errors: Partial<Record<RegisterFormItemKeys, string>>,
+  getNestedFormData: (formData: any, fieldNamePath: RegisterFormItemKeys) => any
+) => {
+  return (
+    <section>
+      <div>
+        <h2>基本</h2>
+      </div>
+
+      {overviewItems.map((item) => {
+        return (
+          <RegistrationForm.Item
+            key={`registration-item-${item.fieldName}`}
+            fieldName={item.fieldName}
+            label={item.label}
+            type={item.type}
+            value={getNestedFormData(formData, item.fieldName)}
+            onChange={onChangeItemHandler(item.fieldName)}
+            error={errors[item.fieldName]}
+          />
+        );
+      })}
+    </section>
+  );
+};
+
+const FinanceForm = (
+  formData: RegisterFormItems,
+  onChangeItemHandler: (fieldName: RegisterFormItemKeys) => any,
+  errors: Partial<Record<RegisterFormItemKeys, string>>,
+  getNestedFormData: (formData: any, fieldNamePath: RegisterFormItemKeys) => any
+) => {
+  return (
+    <section>
+      <div>
+        <h2>財務</h2>
+      </div>
+
+      {financeItems.map((item) => {
+        return (
+          <RegistrationForm.Item
+            key={`registration-item-${item.fieldName}`}
+            fieldName={item.fieldName}
+            label={item.label}
+            type={item.type}
+            value={getNestedFormData(formData, item.fieldName)}
+            onChange={onChangeItemHandler(item.fieldName)}
+            error={errors[item.fieldName]}
+          />
+        );
+      })}
+    </section>
+  );
+};

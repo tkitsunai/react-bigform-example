@@ -23,7 +23,8 @@
     // alias
     "baseUrl": "./",
     "paths": {
-      "@/*": ["src/lib/*"]
+      "@lib/*": ["src/lib/*"],
+      "@components/*": ["src/components/*"]
     }
   },
   "include": ["src"],
