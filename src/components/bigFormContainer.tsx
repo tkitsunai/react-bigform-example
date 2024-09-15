@@ -1,6 +1,8 @@
 import {
+  FinanceInfo,
+  OverviewInfo,
   RegisterFormItemKeys,
-  RegisterFormItems,
+  RegisterFormItemNestKeys,
   useRegistration,
 } from "@lib/presenter/useRegistration";
 import { SearchResult, useSearch } from "@lib/presenter/useSearch";
@@ -13,7 +15,7 @@ import {
 import { RegisterGateway } from "@lib/gateway/registerGateway";
 import { RegisterUsecase } from "@lib/usecase/registrationCompany";
 import { API } from "@lib/driver/api";
-import { FormEvent, MouseEventHandler } from "react";
+import { FormEvent } from "react";
 import { financeItems } from "@components/constants/financeItems";
 
 // Container Components
@@ -63,15 +65,6 @@ export function BigFormContainer() {
     });
   };
 
-  function getNestedFormData(
-    formData: any,
-    fieldNamePath: RegisterFormItemKeys
-  ) {
-    return fieldNamePath
-      .split(".")
-      .reduce((acc, part) => acc && acc[part], formData);
-  }
-
   return (
     <>
       <MemoSearchForm onSubmit={searchOnSubmit} error={searchError}>
@@ -84,19 +77,30 @@ export function BigFormContainer() {
         <SearchForm.Button />
       </MemoSearchForm>
       <MemoRegistrationForm formSubmitHandler={registerOnSubmitHandler}>
-        {OverviewForm(formData, onChangeItemHandler, errors, getNestedFormData)}
-        {FinanceForm(formData, onChangeItemHandler, errors, getNestedFormData)}
+        {OverviewForm(formData.overview, onChangeItemHandler, errors)}
+        {FinanceForm(formData.finance, onChangeItemHandler, errors)}
         <RegistrationForm.Button label="登録" />
       </MemoRegistrationForm>
     </>
   );
 }
 
+function getNestedFormData<T>(formData: T, fieldNamePath: string): string {
+  return fieldNamePath.split(".").reduce((acc: any, part: string) => {
+    if (typeof acc === "object" && acc !== null && part in acc) {
+      return acc[part as keyof typeof acc];
+    }
+    return undefined;
+  }, formData);
+}
+
 const OverviewForm = (
-  formData: RegisterFormItems,
-  onChangeItemHandler: (fieldName: RegisterFormItemKeys) => any,
-  errors: Partial<Record<RegisterFormItemKeys, string>>,
-  getNestedFormData: (formData: any, fieldNamePath: RegisterFormItemKeys) => any
+  overviewData: OverviewInfo,
+  onChangeItemHandler: (
+    category: RegisterFormItemKeys,
+    fieldName: RegisterFormItemNestKeys
+  ) => any,
+  errors: Partial<Record<RegisterFormItemNestKeys, string>>
 ) => {
   return (
     <section>
@@ -105,14 +109,15 @@ const OverviewForm = (
       </div>
 
       {overviewItems.map((item) => {
+        const value = getNestedFormData(overviewData, item.fieldName);
         return (
           <RegistrationForm.Item
             key={`registration-item-${item.fieldName}`}
             fieldName={item.fieldName}
             label={item.label}
             type={item.type}
-            value={getNestedFormData(formData, item.fieldName)}
-            onChange={onChangeItemHandler(item.fieldName)}
+            value={value}
+            onChange={onChangeItemHandler("overview", item.fieldName)}
             error={errors[item.fieldName]}
           />
         );
@@ -122,10 +127,12 @@ const OverviewForm = (
 };
 
 const FinanceForm = (
-  formData: RegisterFormItems,
-  onChangeItemHandler: (fieldName: RegisterFormItemKeys) => any,
-  errors: Partial<Record<RegisterFormItemKeys, string>>,
-  getNestedFormData: (formData: any, fieldNamePath: RegisterFormItemKeys) => any
+  formData: FinanceInfo,
+  onChangeItemHandler: (
+    category: RegisterFormItemKeys,
+    fieldName: RegisterFormItemNestKeys
+  ) => any,
+  errors: Partial<Record<RegisterFormItemNestKeys, string>>
 ) => {
   return (
     <section>
@@ -134,14 +141,15 @@ const FinanceForm = (
       </div>
 
       {financeItems.map((item) => {
+        const value = getNestedFormData(formData, item.fieldName);
         return (
           <RegistrationForm.Item
             key={`registration-item-${item.fieldName}`}
             fieldName={item.fieldName}
             label={item.label}
             type={item.type}
-            value={getNestedFormData(formData, item.fieldName)}
-            onChange={onChangeItemHandler(item.fieldName)}
+            value={value}
+            onChange={onChangeItemHandler("finance", item.fieldName)}
             error={errors[item.fieldName]}
           />
         );

@@ -2,27 +2,27 @@ import { InputItemProps } from "@components/registrationForm";
 
 export const overviewItems: InputItemProps[] = [
   {
-    fieldName: "overview.name",
+    fieldName: "name",
     label: "名前",
     type: "text",
   },
   {
-    fieldName: "overview.address",
+    fieldName: "address",
     label: "住所",
     type: "text",
   },
   {
-    fieldName: "overview.url",
+    fieldName: "url",
     label: "URL",
     type: "text",
   },
   {
-    fieldName: "overview.telephone",
+    fieldName: "telephone",
     label: "電話番号",
     type: "tel",
   },
   {
-    fieldName: "overview.email",
+    fieldName: "email",
     label: "メールアドレス",
     type: "email",
   },

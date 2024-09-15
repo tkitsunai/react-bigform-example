@@ -1,4 +1,7 @@
-import { RegisterFormItemKeys } from "@lib/presenter/useRegistration";
+import {
+  RegisterFormItemKeys,
+  RegisterFormItemNestKeys,
+} from "@lib/presenter/useRegistration";
 import React, {
   DetailedHTMLProps,
   HTMLInputTypeAttribute,
@@ -7,7 +10,7 @@ import React, {
 import { FC, FormEvent } from "react";
 
 export type InputItemProps = {
-  fieldName: RegisterFormItemKeys;
+  fieldName: RegisterFormItemNestKeys;
   label: string;
   type: HTMLInputTypeAttribute;
   error?: string;
@@ -17,20 +20,12 @@ interface RegistrationFormProps {
   formSubmitHandler: (event: FormEvent<HTMLFormElement>) => void;
 }
 
-type RegistrationButtonProps = {
-  label: string;
-};
-
-const RegistrationButton: FC<RegistrationButtonProps> = ({ label }) => {
+const RegistrationButton: FC<{ label: string }> = ({ label }) => {
   return <button type="submit">{label}</button>;
 };
 
-type RegistrationFormChild =
-  | React.ReactElement<RegistrationButtonProps>
-  | React.ReactNode;
-
 interface RegistrationFormChildProps {
-  children: RegistrationFormChild | RegistrationFormChild[];
+  children: React.ReactNode[];
 }
 
 export function FormItem({

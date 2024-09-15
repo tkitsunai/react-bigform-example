@@ -18,8 +18,11 @@ export type FinanceInfo = {
   accountingPeriod: string;
 };
 
-export type RegisterFormItemKeys =
-  `${keyof RegisterFormItems}.${keyof OverviewInfo | keyof FinanceInfo}`;
+export type RegisterFormItemKeys = `${keyof RegisterFormItems}`;
+
+export type RegisterFormItemNestKeys =
+  | `${keyof OverviewInfo}`
+  | `${keyof FinanceInfo}`;
 
 const initialFormData: RegisterFormItems = {
   overview: {
@@ -39,27 +42,26 @@ const initialFormData: RegisterFormItems = {
 export const useRegistration = () => {
   const [formData, setFormData] = useState<RegisterFormItems>(initialFormData);
   const [errors, setErrors] = useState<
-    Partial<Record<RegisterFormItemKeys, string>>
+    Partial<Record<RegisterFormItemNestKeys, string>>
   >({});
 
-  function validateItem(fieldName: RegisterFormItemKeys, value: string) {
+  function validateItem(fieldName: RegisterFormItemNestKeys, value: string) {
     let error = "";
-    if (fieldName === "overview.name" && !value) {
+    if (fieldName === "name" && !value) {
       error = "名前を入力してください。";
     }
     return error;
   }
 
   const onChangeItemHandler = useCallback(
-    (fieldName: RegisterFormItemKeys) =>
+    (category: RegisterFormItemKeys, fieldName: RegisterFormItemNestKeys) =>
       (event: ChangeEvent<HTMLInputElement>) => {
         const value = event.target.value;
-        const [category, field] = fieldName.split(".");
         setFormData((prevData) => ({
           ...prevData,
           [category]: {
             ...prevData[category as keyof typeof prevData],
-            [field]: value,
+            [fieldName]: value,
           },
         }));
       },
@@ -79,11 +81,11 @@ export const useRegistration = () => {
   const formSubmitHandler = (e: FormEvent) => {
     e.preventDefault();
 
-    const errorMessage = validateItem("overview.name", formData.overview.name);
+    const errorMessage = validateItem("name", formData.overview.name);
 
     setErrors((prevErrors) => ({
       ...prevErrors,
-      "overview.name": errorMessage,
+      name: errorMessage,
     }));
 
     if (errorMessage) {
