@@ -1,9 +1,6 @@
-import {
-  RegisterFormItemKeys,
-  RegisterFormItemNestKeys,
-} from "@lib/presenter/useRegistration";
+import { RegisterFormItemNestKeys } from "@lib/presenter/useRegistration";
 import React, {
-  DetailedHTMLProps,
+  ButtonHTMLAttributes,
   HTMLInputTypeAttribute,
   InputHTMLAttributes,
 } from "react";
@@ -24,6 +21,16 @@ const RegistrationButton: FC<{ label: string }> = ({ label }) => {
   return <button type="submit">{label}</button>;
 };
 
+const Button: FC<
+  { label: string } & ButtonHTMLAttributes<HTMLButtonElement>
+> = ({ label, onClick }) => {
+  return (
+    <button type="button" onClick={onClick}>
+      {label}
+    </button>
+  );
+};
+
 interface RegistrationFormChildProps {
   children: React.ReactNode[];
 }
@@ -35,8 +42,7 @@ export function FormItem({
   value,
   onChange,
   error,
-}: InputItemProps &
-  DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>) {
+}: InputItemProps & InputHTMLAttributes<HTMLInputElement>) {
   return (
     <div>
       <label htmlFor={fieldName}>{label}</label>
@@ -58,6 +64,7 @@ export function RegistrationForm({
 }: RegistrationFormProps & RegistrationFormChildProps) {
   return <form onSubmit={formSubmitHandler}>{children}</form>;
 }
-RegistrationForm.Button = React.memo(RegistrationButton);
+RegistrationForm.SubmitButton = React.memo(RegistrationButton);
+RegistrationForm.Button = React.memo(Button);
 RegistrationForm.Item = React.memo(FormItem);
 export const MemoRegistrationForm = React.memo(RegistrationForm);

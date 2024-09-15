@@ -18,11 +18,20 @@ export type FinanceInfo = {
   accountingPeriod: string;
 };
 
-export type RegisterFormItemKeys = `${keyof RegisterFormItems}`;
+export type RegisterFormItemKeys = keyof RegisterFormItems;
+export type RegisterFormItemNestKeys = keyof OverviewInfo | keyof FinanceInfo;
 
-export type RegisterFormItemNestKeys =
-  | `${keyof OverviewInfo}`
-  | `${keyof FinanceInfo}`;
+export const RegisterFormItemKeyNames: {
+  [K in RegisterFormItemNestKeys]: RegisterFormItemNestKeys;
+} = {
+  name: "name",
+  address: "address",
+  url: "url",
+  telephone: "telephone",
+  email: "email",
+  fiscalYear: "fiscalYear",
+  accountingPeriod: "accountingPeriod",
+};
 
 const initialFormData: RegisterFormItems = {
   overview: {
@@ -47,11 +56,16 @@ export const useRegistration = () => {
 
   function validateItem(fieldName: RegisterFormItemNestKeys, value: string) {
     let error = "";
-    if (fieldName === "name" && !value) {
+    if (fieldName === RegisterFormItemKeyNames.name && !value) {
       error = "名前を入力してください。";
     }
     return error;
   }
+
+  const clearFormItems = () => {
+    setFormData(initialFormData);
+    setErrors({});
+  };
 
   const onChangeItemHandler = useCallback(
     (category: RegisterFormItemKeys, fieldName: RegisterFormItemNestKeys) =>
@@ -81,11 +95,14 @@ export const useRegistration = () => {
   const formSubmitHandler = (e: FormEvent) => {
     e.preventDefault();
 
-    const errorMessage = validateItem("name", formData.overview.name);
+    const errorMessage = validateItem(
+      RegisterFormItemKeyNames.name,
+      formData.overview.name
+    );
 
     setErrors((prevErrors) => ({
       ...prevErrors,
-      name: errorMessage,
+      [RegisterFormItemKeyNames.name]: errorMessage,
     }));
 
     if (errorMessage) {
@@ -99,5 +116,6 @@ export const useRegistration = () => {
     updateFormData,
     formSubmitHandler,
     errors,
+    clearFormItems,
   ] as const;
 };

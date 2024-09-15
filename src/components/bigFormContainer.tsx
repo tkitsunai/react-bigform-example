@@ -26,6 +26,7 @@ export function BigFormContainer() {
     updateFormData,
     registerOnSubmit,
     errors,
+    clearFormItems,
   ] = useRegistration();
 
   const [
@@ -77,9 +78,13 @@ export function BigFormContainer() {
         <SearchForm.Button />
       </MemoSearchForm>
       <MemoRegistrationForm formSubmitHandler={registerOnSubmitHandler}>
+        <RegistrationForm.Button
+          onClick={() => clearFormItems()}
+          label="クリア"
+        />
         {OverviewForm(formData.overview, onChangeItemHandler, errors)}
         {FinanceForm(formData.finance, onChangeItemHandler, errors)}
-        <RegistrationForm.Button label="登録" />
+        <RegistrationForm.SubmitButton label="登録" />
       </MemoRegistrationForm>
     </>
   );
