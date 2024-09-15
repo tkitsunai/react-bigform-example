@@ -1,5 +1,4 @@
 import {
-  FinanceInfo,
   RegisterFormItemKeys,
   RegisterFormItems,
   useRegistration,
@@ -14,7 +13,7 @@ import {
 import { RegisterGateway } from "@lib/gateway/registerGateway";
 import { RegisterUsecase } from "@lib/usecase/registrationCompany";
 import { API } from "@lib/driver/api";
-import { FormEvent } from "react";
+import { FormEvent, MouseEventHandler } from "react";
 import { financeItems } from "@components/constants/financeItems";
 
 // Container Components
@@ -27,17 +26,23 @@ export function BigFormContainer() {
     errors,
   ] = useRegistration();
 
-  const {
+  const [
     companyId,
-    handleChange: handleSearchChange,
-    formSubmitHandler: searchSubmitHandler,
-    error: searchError,
+    companyIdOnChangeHandler,
     onSearchHandler,
-  } = useSearch();
+    searchError,
+    setSearchError,
+  ] = useSearch();
 
   const searchOnSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    searchSubmitHandler(companyId, (result: SearchResult) => {
+
+    if (companyId === "") {
+      setSearchError("IDを入力してください");
+      return;
+    }
+
+    onSearchHandler(companyId, (result: SearchResult) => {
       updateFormData({
         overview: {
           name: result.name,
@@ -69,14 +74,14 @@ export function BigFormContainer() {
 
   return (
     <>
-      <MemoSearchForm handleFormSubmit={searchOnSubmit} error={searchError}>
+      <MemoSearchForm onSubmit={searchOnSubmit} error={searchError}>
         <input
           name="companyId"
           type="text"
           value={companyId}
-          onChange={handleSearchChange}
+          onChange={(e) => companyIdOnChangeHandler(e.target.value)}
         />
-        <SearchForm.Button onClickHandler={onSearchHandler} />
+        <SearchForm.Button />
       </MemoSearchForm>
       <MemoRegistrationForm formSubmitHandler={registerOnSubmitHandler}>
         {OverviewForm(formData, onChangeItemHandler, errors, getNestedFormData)}

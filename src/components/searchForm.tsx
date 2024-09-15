@@ -1,37 +1,36 @@
-import React from "react";
-import { FC, MouseEventHandler } from "react";
+import React, { ButtonHTMLAttributes, FormHTMLAttributes } from "react";
+import { FC } from "react";
 
-interface ButtonProps {
-  onClickHandler?: MouseEventHandler<HTMLButtonElement>;
-}
-
-const SearchButton: FC<ButtonProps> = ({ onClickHandler }) => {
+const SearchButton: FC<ButtonHTMLAttributes<HTMLButtonElement>> = ({
+  onClick,
+}) => {
   return (
-    <button type="submit" onClick={onClickHandler}>
+    <button type="submit" onClick={onClick}>
       Search
     </button>
   );
 };
 
-// SearchForm内で許可するコンポーネント型
-type SearchFormChild = React.ReactElement<ButtonProps> | React.ReactElement;
+type SearchFormChild = React.ReactElement | React.ReactNode;
 
 interface SearchFormChildProps {
   children: SearchFormChild | SearchFormChild[];
 }
 
 interface SearchFormProps {
-  handleFormSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-  error: string;
+  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  error?: string;
 }
 
 export function SearchForm({
-  handleFormSubmit,
+  onSubmit,
   error,
   children,
-}: SearchFormProps & SearchFormChildProps) {
+}: SearchFormProps &
+  SearchFormChildProps &
+  FormHTMLAttributes<HTMLFormElement>) {
   return (
-    <form onSubmit={handleFormSubmit}>
+    <form onSubmit={onSubmit}>
       {children}
       {error && <p style={{ color: "red" }}>{error}</p>}
     </form>

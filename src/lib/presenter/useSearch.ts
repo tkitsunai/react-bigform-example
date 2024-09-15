@@ -1,5 +1,5 @@
 import { searchCompany } from "@lib/usecase/searchCompany";
-import { ChangeEvent, MouseEvent, useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 
 export type CompanyId = string;
 
@@ -15,18 +15,16 @@ export type SearchResult = {
 // custom hook for search
 export const useSearch = () => {
   const [companyId, setCompanyId] = useState<string>("");
-  const [error, setError] = useState<string>("");
+  const [searchError, setSearchError] = useState<string>();
 
-  const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    setCompanyId(e.target.value);
-  }, []);
+  const companyIdOnChangeHandler = useCallback(
+    (value: CompanyId) => {
+      setCompanyId(value);
+    },
+    [setCompanyId]
+  );
 
-  const onSearchHandler = (e: MouseEvent<HTMLButtonElement>) => {
-    // 必要ならここにボタンがクリックされた時の処理を書く
-    console.log("on search handler", e);
-  };
-
-  const formSubmitHandler = async (
+  const onSearchHandler = async (
     companyId: CompanyId,
     callback: (result: SearchResult) => void
   ) => {
@@ -39,18 +37,17 @@ export const useSearch = () => {
       }
 
       callback(result.data);
-      setError("");
+      setSearchError(undefined);
     } catch (err) {
-      setError("検索に失敗");
+      setSearchError("検索に失敗");
     }
   };
 
-  return {
+  return [
     companyId,
-    setCompanyId,
-    handleChange,
-    formSubmitHandler,
+    companyIdOnChangeHandler,
     onSearchHandler,
-    error,
-  };
+    searchError,
+    setSearchError,
+  ] as const;
 };
